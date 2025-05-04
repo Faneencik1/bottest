@@ -340,6 +340,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 Отправьте любое сообщение, фото или видео, и оно будет переслано администратору.
 """
+    
     await update.message.reply_text(help_text, parse_mode='HTML')
 
         log_date = datetime.now().strftime("%Y-%m-%d")
