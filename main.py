@@ -323,25 +323,6 @@ async def list_banned(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if message:
             await message.reply_text("Произошла ошибка при выполнении команды.")
 
-async def send_log(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        if update.effective_user.id not in ALLOWED_USERS:
-            await update.message.reply_text("Недостаточно прав для доступа к логам.")
-            return
-
-    await update.message.reply_text(help_text, parse_mode='HTML')
-
-        log_date = datetime.now().strftime("%Y-%m-%d")
-        log_filename = f"log_{log_date}.txt"
-
-        if os.path.exists(log_filename):
-            with open(log_filename, "rb") as log_file:
-                await update.message.reply_document(document=InputFile(log_file), filename=log_filename)
-        else:
-            await update.message.reply_text("Файл логов за сегодня не найден.")
-    except Exception as e:
-        logger.error(f"Ошибка при отправке логов: {e}", exc_info=True)
-
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = """
 <b>Доступные команды:</b>
@@ -354,6 +335,23 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 Отправьте любое сообщение, фото или видео, и оно будет переслано администратору.
 """
     await update.message.reply_text(help_text, parse_mode='HTML')
+
+async def send_log(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        if update.effective_user.id not in ALLOWED_USERS:
+            await update.message.reply_text("Недостаточно прав для доступа к логам.")
+            return
+
+        log_date = datetime.now().strftime("%Y-%m-%d")
+        log_filename = f"log_{log_date}.txt"
+
+        if os.path.exists(log_filename):
+            with open(log_filename, "rb") as log_file:
+                await update.message.reply_document(document=InputFile(log_file), filename=log_filename)
+        else:
+            await update.message.reply_text("Файл логов за сегодня не найден.")
+    except Exception as e:
+        logger.error(f"Ошибка при отправке логов: {e}", exc_info=True)
 
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
